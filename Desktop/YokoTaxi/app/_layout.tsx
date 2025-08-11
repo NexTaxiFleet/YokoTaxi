@@ -1,7 +1,11 @@
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
+import React, { useEffect } from "react";
+import { Stack } from "expo-router";
 import "react-native-reanimated";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -10,10 +14,11 @@ export default function RootLayout() {
     "Jakarta-ExtraLight": require("../assets/fonts/PlusJakartaSans-ExtraLight.ttf"),
     "Jakarta-Light": require("../assets/fonts/PlusJakartaSans-Light.ttf"),
     "Jakarta-Medium": require("../assets/fonts/PlusJakartaSans-Medium.ttf"),
-    Jakarta: require("../assets/fonts/PlusJakartaSans-Regular.ttf"),
+    "Jakarta-Regular": require("../assets/fonts/PlusJakartaSans-Regular.ttf"),
     "Jakarta-SemiBold": require("../assets/fonts/PlusJakartaSans-SemiBold.ttf"),
   });
 
+  // Hide splash screen once fonts are loaded
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
@@ -21,12 +26,17 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
+    // Render nothing while fonts are loading (keep splash screen visible)
     return null;
   }
+
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="+not-found" />
-    </Stack>
+    <>
+      <StatusBar style="auto" />
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" />
+      </Stack>
+    </>
   );
 }
